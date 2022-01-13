@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+
+<h1 style="font-family: 'Poppins', sans-serif", align='center'>Diary</h1>
+<ul id='notes' >
+    
+    {% for note in user.notes %}
+    <div class='{{ note.id }}' style = "display: none; font-family: 'Poppins', sans-serif;">
+        
+        <li id='{{ note.id }}'><span>Title: </span>{{ note.title }}
+            <button type='button' class='close' onclick="deleteNote(`{{note.id}}`)">
+                <span aria-hidden='true'>&times;</span>
+            </button>
+        </li>
+        <li id='{{ note.id }}'><span>Body: </span>{{ note.data }}</li>
+        <br />
+       
+    </div>
+    {% endfor %}
+    
+</ul>
+<div id='onAddNote' style='display: none;'>
+    
+    
+    <form method='POST' class='notes'>
+        <input name='title' id='title' style="font-family: 'Poppins', sans-serif;" class='form-control' placeholder='Enter Title..'>
+        <textarea name='note' id='note' style="font-family: 'Poppins', sans-serif;" class='form-control'placeholder='Dear Diary..'></textarea>
+        </br>
+        
+        <div align='center'>
+            <button type='submit' style="font-family: 'Poppins', sans-serif;" class='btn btn-primary'>Save Diary Note</button>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

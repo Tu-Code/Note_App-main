@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel='stylesheet' href='.\static\css\main.css'>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous"/>
+        <title>{% block title %}Base{% endblock %}</title>
+    </head>
+
+    <body id='body'>
+
+        <nav class='navbar navbar-expand-lg navbar-dark bg-dark'>
+            <button class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbar'>
+                <span class='navbar-toggler-icon'></span>
+            </button>
+            <div class='collapse navbar-collapse' id='navbar'>
+                <div class='navbar-nav'>
+                    {% if user.is_authenticated %}
+                    <a class='nav-item nav-link' id='home' href='/'>Home</a>
+                    <a class='nav-item nav-link' id='logout' href='/logout'>Logout</a>
+                    
+                    {% else %}
+                    <a class='nav-item nav-link' id='login' href='/login'>Login</a>
+                    <a class='nav-item nav-link' id='signUp' href='/signup'>Sign Up</a>
+                    
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+        <!-- side bar containing entries -->
+         <!-- error messages -->
+         {% with messages = get_flashed_messages(with_categories=true) %}
+         {% if messages %}
+             {% for category, message in messages %}
+                 <!-- what kind of error? -->
+                 {% if category == 'error' %}
+                 <!-- danger -->
+                 <div class='flashes alert alert-danger alert-dismissable fade show' role='alert'>
+                     {{ message }}
+                     <button type='button' class='close' data-dismiss='alert'>
+                         <span aria-hidden="true">&times;</span>
+                     </button>
+                 </div>
+                 {% else %}
+                 <!-- success -->
+                 <div class='flashes alert alert-success alert-dismissable fade show' role='alert'>
+                     {{ message }}
+                     <button type='button' class='close' data-dismiss='alert'>
+                         <span aria-hidden="true">&times;</span>
+                     </button>
+                 </div>
+                 {% endif %}
+             {% endfor %}
+         {% endif %}
+         {% endwith %}
+         {% if user.is_authenticated %}
+        <div>
+            <div class="container-fluid">
+                <div class="row flex-nowrap">
+                    <div id='side_bar' class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+                        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                            <!-- <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none"> -->
+                            <span class="fs-5 d-none d-sm-inline" style='align-self: center;'>Diary Entries</span>
+                            <!-- </a> -->
+                            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                                
+                                <button class="notes__add" type="button" onClick='onAddNote()'>Add Note</button>
+                                <!-- </form> -->
+                               
+                                {% for note in user.notes %}
+                                <!-- <li class="nav-item">
+                                    <a href="#" class="nav-link align-middle px-0">
+                                        <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">{{ note.data }}</span>
+                                    </a>
+                                </li> -->
+
+                                <div class="notes" id="app-{{note.id}}" onclick="$(`.{{note.id}}`).show()">
+                                    <div class="notes__sidebar">
+                                        <div class="notes__list">
+                                            <div class="notes__list-item notes__list-item--selected">
+                                                {% if note.title.__len__() > 5 %}
+                                                <div class="notes__small-title">
+                                                    {{ note.title[0:8] }}
+                                                    {{ "..." }}
+                                                </div>
+                                                {% else %}
+                                                <div class="notes__small-title">
+                                                    {{ note.title }}
+                                                </div>
+                                                {% endif %}
+                                                
+                                                {% if note.data.__len__() > 10 %}                                                         
+                                                <div class="notes__small-body">
+                                                    {{ note.data[0:10] }}
+                                                    {{ "...." }}
+                                                </div>
+                                                {% else %}
+                                                <div class="notes__small-body">{{ note.data }}</div>
+                                                {% endif %}
+                                                <div class="notes__small-updated">{{ note.date }}</div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor%}
+                                
+                            </ul>
+                            <hr>
+                        
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class='container'>
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+       
+        
+        <script
+        src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"
+        ></script>
+        <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"
+        ></script>
+        <script
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"
+        ></script>
+ 
+        <script
+        type="text/javascript"
+        src="{{ url_for('static', filename='index.js') }}"
+        ></script>
+
+    </body>
+</html>
